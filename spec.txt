@@ -1,0 +1,101 @@
++-------------------------------+
+| C32 - 32-Bit Fantasy Computer |
+|                               |
+| Author:        Tori Alex Hall |
+| Start Date:        15/07/2024 |
+| End Date:                   - |
+| Revision:                   1 |
++-------------------------------+
+
+0.      Contents
+----------------
+1.  Introduction
+2.  Architecture
+3.    Memory Map
+4.  Instructions
+
+
+1.  Introduction
+----------------
+
+2.  Architecture
+----------------
+    Due to the use of a custom CPU and instruction set, the C32
+has a unique architecture that must be fully specified to avoid
+ambiguity on the functionality of the processor. The complete 
+architecture of the computer and processor is given here.
+
+2.1    Registers
+----------------
+
+
+3.    Memory Map
+----------------
+    By default, the C32 has a 24-bit address space, allowing for 
+16MiB of RAM. Currently, the C32 does not support memory paging, 
+however this is to be implemented in the future. The default 
+intended memory map is shown in the table below.
+
++-------------------------------------+-----------------------------------------------------+
+| Start Address | End Address | Label | Description                                         |
++---------------+-------------+-------+-----------------------------------------------------+
+| 0x000000      | 0x000FFF    | BIOS  | Mapped to BIOS ROM chip - Executed on boot.         |
+| 0x001000      | 0x001FFF    | I/O   | Memory space for device mapping.                    |
+| 0x002000      | 0x002FA2    | VMEM  | Mapped to video memory                              |
+| 0x002FA3      | 0x002FFF    | -     | Unused memory for alignment.                        |
+| 0x003000      | 0xEFFFFF    | GRAM  | General-Purpose memory. Kernel is loaded into here. |
+| 0xF00000      | 0xFFFFFF    | STCK  | Stack Memory.                                       |
++---------------+-------------+-------+-----------------------------------------------------+
+
+3.1    I/O
+----------
+    All devices are mapped in the memory range 0x1100-0x1FFF.
+In the emulator, devices specify the addresses they occupy, and
+whenever a read or write operation is executed in that space,
+the call is sent to the device instead.
+
+    The address range 0x1000-0x10FF is dedicated to the device
+table, which is a 256-byte region of memory that gives a device
+signature and the lowest address the device uses. Each table entry
+consists of 4 bytes - the first containing the signature, and the 
+last three containing the low address. This allows for 64 devices 
+to be connected at any one time. These are the signatures recognised 
+by the default BIOS:
+
+00 - No device
+01 - Keyboard
+02 - C32-Compatible Disk Drive
+
+3.2  Video
+----------
+    In the emulator, there are two supported video modes - An 80x25
+text mode, with 16-colour text, or an 80x50 graphics mode with 8bpp.
+Pixel/Text data is stored in the memory rance 0x2000-0x2FA0. In Text
+Mode (mode 0), each character uses two bytes - the first representing
+the foreground and background colour of the character, and the second
+representing the ASCII code of the character. In graphics mode (mode 1),
+each pixel is represented by one byte of data, allowing for a 256-colour
+display. There are two registers associated with video memory.
+
++----------+-------+----------------------------+
+| Address  | Label | Description                |
++----------+-------+----------------------------+
+| 0x002FA1 | MODE  | Video Mode                 |
+| 0x002FA2 | INST  | Video Instruction Register |
++----------+-------+----------------------------+
+
+    The video instruction register can be used to perform certain operations
+on the contents of video memory. When it is non-zero, the video driver will
+perform an operation, before resetting the value of the register. These are
+the currently supported operations:
+
++--------+-------+--------------------------+
+| Opcode | Label | Description              |
++--------+-------+--------------------------+
+| 0x01   | RST   | Resets video mode + vmem |
+| 0x02   | CLR   | Resets vmem              |
+| 0x03   | SCRL  | Scrolls text (Text Only) |
++--------+-------+--------------------------+
+
+4.  Instructions
+----------------
