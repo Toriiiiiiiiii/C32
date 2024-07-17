@@ -9,6 +9,11 @@ void printUsage(char **argv) {
     printf("Usage : %s [-h]\n", argv[0]);
 }
 
+void runEmulator() {
+    MMU mmu = MMU();
+    mmu.loadBIOS("BIOS");
+}
+
 int main(int argc, char **argv) {
     std::vector<ArgumentTemplate> usage = {
         ArgumentTemplate{ARG_OPTIONAL | ARG_IMPLIED, "-h", "help"}
@@ -26,6 +31,8 @@ int main(int argc, char **argv) {
         printUsage(argv);
         goto cleanup;
     }
+
+    runEmulator();
 
 cleanup:
     delete argParser;

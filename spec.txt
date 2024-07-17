@@ -17,6 +17,9 @@
 
 1.  Introduction
 ----------------
+    This document is intended to be a complete specification and
+design document to the C32. It is also intended to be readable and
+useful as a reference for programmers.
 
 2.  Architecture
 ----------------
@@ -27,7 +30,58 @@ architecture of the computer and processor is given here.
 
 2.1    Registers
 ----------------
+    The C32 has 4 programmer-accessible hardware registers, as 
+well as a number of non-accessible registers. It should be noted,
+however, that each register has a set of "virtual" registers assigned
+to it, depending on the bit width of the instruction. Because of this,
+it is necessary to allow for 4 bits for registers in instructions, 
+instead of two.
 
+32-Bit Registers
++-------+-------+-------------+
+| Index | Label | Description |
++-------+-------+-------------+
+| 0     | R0    | Register 0  |
+| 1     | R1    | Register 1  |
+| 2     | R2    | Register 2  |
+| 3     | R3    | Register 3  |
++-------+-------+-------------+
+
+16-Bit Registers
++-------+-------+-------------------------+
+| Index | Label | Description             |
++-------+-------+-------------------------+
+| 0     | H0    | Register 0 (Bits 31-16) | 
+| 1     | L0    | Register 0 (Bits 15-0)  | 
+| 2     | H1    | Register 1 (Bits 31-16) | 
+| 3     | L1    | Register 1 (Bits 15-0)  | 
+| 4     | H2    | Register 2 (Bits 31-16) | 
+| 5     | L2    | Register 2 (Bits 15-0)  | 
+| 6     | H3    | Register 3 (Bits 31-16) | 
+| 7     | L3    | Register 3 (Bits 15-0)  | 
++-------+-------+-------------------------+
+
+8-Bit Registers
++-------+-------+-------------------------+
+| Index | Label | Description             |
++-------+-------+-------------------------+
+| 0     | HH0   | Register 0 (Bits 31-24) |
+| 1     | HL0   | Register 0 (Bits 23-16) |
+| 2     | LH0   | Register 0 (Bits 15-8)  |
+| 3     | LL0   | Register 0 (Bits 7-0)   |
+| 4     | HH1   | Register 1 (Bits 31-24) |
+| 5     | HL1   | Register 1 (Bits 23-16) |
+| 6     | LH1   | Register 1 (Bits 15-8)  |
+| 7     | LL1   | Register 1 (Bits 7-0)   |
+| 8     | HH2   | Register 2 (Bits 31-24) |
+| 9     | HL2   | Register 2 (Bits 23-16) |
+| 10    | LH2   | Register 2 (Bits 15-8)  |
+| 11    | LL2   | Register 2 (Bits 7-0)   |
+| 12    | HH3   | Register 3 (Bits 31-24) |
+| 13    | HL3   | Register 3 (Bits 23-16) |
+| 14    | LH3   | Register 3 (Bits 15-8)  |
+| 15    | LL3   | Register 3 (Bits 7-0)   |
++-------+-------+-------------------------+
 
 3.    Memory Map
 ----------------

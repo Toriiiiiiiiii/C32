@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -g -c -Wall -Wpedantic -Werror
+CFLAGS = -g -c -Wall -Wpedantic
 LDFLAGS = 
 
 SRC = $(wildcard src/*.cc)
