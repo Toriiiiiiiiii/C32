@@ -4,6 +4,7 @@
 
 #include "arguments.h"
 #include "memory.h"
+#include "cpu.h"
 
 void printUsage(char **argv) {
     printf("Usage : %s [-h]\n", argv[0]);
@@ -12,6 +13,13 @@ void printUsage(char **argv) {
 void runEmulator() {
     MMU mmu = MMU();
     mmu.loadBIOS("BIOS");
+
+    CPU cpu = CPU(&mmu);
+    cpu.writeReg(1, HL0, 0xfa);
+    cpu.writeReg(1, LH0, 0xce);
+
+    printf("0x%08x\n", cpu.readReg(4, 0));
+    printf("0x%04x\n", cpu.readReg(2, L0));
 }
 
 int main(int argc, char **argv) {

@@ -105,7 +105,6 @@ int MMU::loadBIOS(std::string fpath) {
     std::filesystem::path path{fpath};
     dword fileSize = std::filesystem::file_size(path);
 
-    printf("here\n");
     if(fileSize > 0x1000) {
         log(LOG_ERROR, "BIOS File " + fpath + " is too large to load - Can have maximum size of 4KiB.");
         return -1;

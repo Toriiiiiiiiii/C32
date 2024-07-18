@@ -28,7 +28,22 @@ has a unique architecture that must be fully specified to avoid
 ambiguity on the functionality of the processor. The complete 
 architecture of the computer and processor is given here.
 
-2.1    Registers
+2.1   Basic Info
+----------------
+    This section will detail basic information on the architecture of
+the C32.
+
+    The C32 is a little-endian machine, meaning values are stored with
+the least-significant byte first. For example, the 32-bit integer value
+0x87654321 will be stored in memory as follows:
+
++---------+----+----+----+----+
+| Address | 00 | 01 | 02 | 03 |
++---------+----+----+----+----+
+| Value   | 21 | 43 | 65 | 87 |
++---------+----+----+----+----+
+
+2.2    Registers
 ----------------
     The C32 has 4 programmer-accessible hardware registers, as 
 well as a number of non-accessible registers. It should be noted,
@@ -153,3 +168,47 @@ the currently supported operations:
 
 4.  Instructions
 ----------------
+    Instructions are stored in memory as 32-bit values. Certain
+instructions can use up to 2 operands, the size of which varies with the 
+bit-mode of the instruction. Due to the register subdivision in different 
+bit-modes, it is necessary that the register selects each take 4 bits, 
+despite the fact that they may not be fully used. Instructions are layed 
+out as follows:
+
++----------+--------+----------+-------------+-----------+--------+-----+-----+
+| Bits     | 31-24  | 23-20    | 19-16       | 15-12     | 11-8   | 7-4 | 3-0 |
++----------+--------+----------+-------------+-----------+--------+-----+-----+
+| Function | Opcode | Bit Mode | Source Mode | Dest Mode | Unused | RS1 | RS2 |
++----------+--------+----------+-------------+-----------+--------+-----+-----+
+
+    While opcodes are allocated 1 byte of memory, there are not 256 valid opcodes.
+This allows for any future expansions to the instruction set, and also allows for
+a more readable binary format, at the expense of slightly higher memory usage.
+Opcodes are listed below:
+
++------+-----------+----------+-------------------+
+| Hex  | Mneumonic | Bitmodes | Function          |
++------+-----------+----------+-------------------+
+| 0x00 | NOP       | N/A      | N/A               |
+| 0x01 | MOV       | 8,16,32  | D = S             |
+| 0x02 | ADD       | 8,16,32  | D = D + S         |
+| 0x03 | SUB       | 8,16,32  | D = D - S         |
+| 0x04 | MUL       | 8,16,32  | D = D * S         |
+| 0x05 | DIV       | 8,16,32  | D = D / S         |
+| 0x06 | MOD       | 8,16,32  | D = D % S         |
+| 0x07 | AND       | 8,16,32  | D = D & S         |
+| 0x08 | LOR       | 8,16,32  | D = D | S         |
+| 0x09 | NOT       | 8,16,32  | D = ~D            |
+| 0x0A | CMP       | 8,16,32  | COMPARE D, S      |
+| 0x0B | PSH       | 8,16,32  | STK << S          |
+| 0x0C | POP       | 8,16,32  | STK >> D          |
+| 0x0D | JMP       | 32       | PC = S            |
+| 0x0E | JIZ       | 32       | PC = S (ZF)       |
+| 0x0F | JIC       | 32       | PC = S (CF)       |
+| 0x10 | JIL       | 32       | PC = S (LF)       |
+| 0x11 | JIG       | 32       | PC = S (GF)       |
+| 0x12 | JSR       | 32       | STK << PC, PC = S |
+| 0x13 | RTS       | 32       | STK >> PC         |
++------+-----------+----------+-------------------+
+
+Note: RS1 is used as the SOURCE register. RS2 is used as the DEST register.
